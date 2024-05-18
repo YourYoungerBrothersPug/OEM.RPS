@@ -1,9 +1,10 @@
-﻿using System.Reflection;
+﻿using EnumsNET;
 
 namespace OEM.RPS.Extensions;
 
 public static class EnumExtensions
 {
-	public static bool HasAttribute<T>(this Enum e) where T : Attribute
-		=> e.GetType().GetMember(e.ToString()).FirstOrDefault()?.GetCustomAttribute<T>() is not null;
+	public static bool HasAttribute<TEnum, TAttribute>(this TEnum e)
+		where TEnum : struct, Enum where TAttribute : Attribute
+		=> e.GetAttributes()?.Has<TAttribute>() ?? false;
 }

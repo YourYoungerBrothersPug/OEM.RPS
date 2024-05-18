@@ -2,7 +2,7 @@
 
 public enum Outcome
 {
-	Win,
+	UserWon,
 	Draw,
-	Loss
+	UserLost
 }

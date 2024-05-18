@@ -14,8 +14,9 @@ public class GameModeHelper : InputHelper, IGameModeHelper
 
 		GameMode gameMode = (InputBool(lastMoveQuestion), InputBool(bigBangQuestion));
 
+		Console.Clear();
 		Console.ForegroundColor = ConsoleColor.White;
-		Console.WriteLine("\r\nGame Modes Selected");
+		Console.WriteLine("Game Modes Selected");
 		Console.ForegroundColor = ConsoleColor.Gray;
 		Console.WriteLine("-------------------");
 		Console.ForegroundColor = ConsoleColor.White;

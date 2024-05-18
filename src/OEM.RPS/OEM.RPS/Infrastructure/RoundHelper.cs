@@ -1,36 +1,56 @@
-﻿using OEM.RPS.Enums;
+﻿using EnumsNET;
+using OEM.RPS.Enums;
 using OEM.RPS.Extensions;
 using OEM.RPS.Models.Attributes;
 
 namespace OEM.RPS.Infrastructure;
 
-public interface IRoundHelper
+public interface IRoundHelper : IInputHelper
 {
-	public Outcome PlayRound(GameMode gameMode);
+	public Outcome PlayRound();
 }
 
-public class RoundHelper : InputHelper, IRoundHelper
+public class RoundHelper(GameMode gameMode) : InputHelper, IRoundHelper
 {
-	public Outcome PlayRound(GameMode gameMode)
+	private readonly Random _random = new();
+	private readonly Attack[] _attacks = [.. Enum.GetValues<Attack>()
+		.Where(a => gameMode.BigBang || !a.HasAttribute<Attack, BigBangAttribute>())];
+
+	private Attack? _userLastAttack;
+
+	public Outcome PlayRound()
 	{
-		Attack[] availableAttacks = gameMode.BigBang
-			? Enum.GetValues<Attack>()
-			: [.. Enum.GetValues<Attack>()
-				.Where(a => !a.HasAttribute<BigBangAttribute>())];
+		string question = $"What attack do you want to use?\r\n{string.Join("\r\n", _attacks.Select(a => $"{(int)a}) {a}"))}\r\n";
+		Attack userAttack = InputAttack(question);
+		Attack aiAttack = gameMode.LastMove && _userLastAttack is not null
+			? _userLastAttack.Value
+			: _attacks[_random.Next(_attacks.Length)];
 
-		Attack chosenAttack = InputAttack($"What attack do you want to use?\r\n{string.Join("\r\n", availableAttacks)}\r\n");
+		_userLastAttack = userAttack;
 
-		foreach (Attack attack in availableAttacks)
+		Console.ForegroundColor = ConsoleColor.White;
+		Console.WriteLine();
+		foreach (Attack attack in _attacks)
 		{
 			Console.WriteLine($"{attack}...");
-			Thread.Sleep(250);
+			Thread.Sleep(1000);
 		}
 
-		// TODO Add Random AI Player
-		// TODO Add Last Choice AI
+		Console.Write("\r\nYou used ");
+		Console.ForegroundColor = ConsoleColor.Gray;
+		Console.WriteLine(userAttack.ToString().ToLower());
+		Console.ForegroundColor = ConsoleColor.White;
+		Console.Write("The AI used ");
+		Console.ForegroundColor = ConsoleColor.Gray;
+		Console.WriteLine(aiAttack.ToString().ToLower());
 
-		// TODO Determine outcome
-		// TODO If the same, if I've won against
-		return Outcome.Win;
+		if (userAttack == aiAttack)
+			return Outcome.Draw;
+
+		WinsAgainstAttribute userWinsAgainst = userAttack.GetAttributes()!.Get<WinsAgainstAttribute>()!;
+
+		return userWinsAgainst.WinsAgainst.Contains(aiAttack)
+			? Outcome.UserWon
+			: Outcome.UserLost;
 	}
 }

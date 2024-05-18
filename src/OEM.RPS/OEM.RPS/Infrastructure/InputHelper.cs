@@ -2,7 +2,12 @@
 
 namespace OEM.RPS.Infrastructure;
 
-public abstract class InputHelper
+public interface IInputHelper
+{
+	public bool InputBool(string question);
+}
+
+public abstract class InputHelper : IInputHelper
 {
 	private static string? GetInput(string question)
 	{
@@ -23,15 +28,15 @@ public abstract class InputHelper
 
 			switch (input.Trim().ToLower())
 			{
-				case "yes" or "y" or "true" or "1":
+				case "yes" or "y" or "true":
 					return true;
-				case "no" or "n" or "false" or "0":
+				case "no" or "n" or "false":
 					return false;
 			}
 		}
 	}
 
-	public Attack InputAttack(string question)
+	protected Attack InputAttack(string question)
 	{
 		while (true)
 		{
