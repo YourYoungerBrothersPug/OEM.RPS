@@ -7,6 +7,8 @@ namespace OEM.RPS.Tests.Features;
 
 public class ProgramTests
 {
+	// TODO Other Tests
+
 	[Fact]
 	public void Main()
 	{
@@ -29,6 +31,8 @@ public class ProgramTests
 			.GetGameMode();
 		gameHelper.Received(1)
 			.PlayGame();
+		consoleWrapper.Received(1)
+			.Write("\r\nPress any key to exit", ConsoleColor.White);
 		consoleWrapper.Received(1)
 			.ReadKey();
 	}

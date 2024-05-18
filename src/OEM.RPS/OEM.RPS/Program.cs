@@ -8,6 +8,7 @@ public class Program
 {
 	public static IServiceProvider Services { get; set; } = new ServiceCollection()
 		.AddSingleton<IConsoleWrapper, ConsoleWrapper>()
+		.AddSingleton<IInputHelper, InputHelper>()
 		.AddSingleton<IGameModeHelper, GameModeHelper>()
 		.AddSingleton<IGameHelper, GameHelper>()
 		.AddSingleton<IRoundHelper, RoundHelper>()
@@ -22,8 +23,7 @@ public class Program
 
 		IConsoleWrapper console = Services.GetRequiredService<IConsoleWrapper>();
 
-		Console.ForegroundColor = ConsoleColor.White;
-		Console.Write("\r\nPress any key to exit");
+		console.Write("\r\nPress any key to exit", Colour.White);
 		console.ReadKey();
 	}
 }

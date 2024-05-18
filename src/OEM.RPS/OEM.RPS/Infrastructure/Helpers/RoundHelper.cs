@@ -1,7 +1,6 @@
 ﻿using EnumsNET;
 using OEM.RPS.Enums;
 using OEM.RPS.Extensions;
-using OEM.RPS.Infrastructure.Helpers.Base;
 using OEM.RPS.Models.Attributes;
 
 namespace OEM.RPS.Infrastructure.Helpers;
@@ -11,7 +10,7 @@ public interface IRoundHelper
 	public Outcome PlayRound();
 }
 
-public class RoundHelper(IGameModeHelper gameModeHelper) : InputHelper, IRoundHelper
+public class RoundHelper(IConsoleWrapper console, IGameModeHelper gameModeHelper, IInputHelper inputHelper) : IRoundHelper
 {
 	private readonly Random _random = new();
 	private readonly Attack[] _attacks = [.. Enum.GetValues<Attack>()
@@ -22,28 +21,24 @@ public class RoundHelper(IGameModeHelper gameModeHelper) : InputHelper, IRoundHe
 	public Outcome PlayRound()
 	{
 		string question = $"What attack do you want to use?\r\n{string.Join("\r\n", _attacks.Select(a => $"{(int)a}) {a}"))}\r\n";
-		Attack userAttack = InputAttack(question);
+		Attack userAttack = inputHelper.InputAttack(question);
 		Attack aiAttack = gameModeHelper.LastMove && _userLastAttack is not null
 			? _userLastAttack.Value
 			: _attacks[_random.Next(_attacks.Length)];
 
 		_userLastAttack = userAttack;
 
-		Console.ForegroundColor = ConsoleColor.White;
-		Console.WriteLine();
+		console.WriteLine(null, Colour.White);
 		foreach (Attack attack in _attacks)
 		{
-			Console.WriteLine($"{attack}...");
+			console.WriteLine($"{attack}...");
 			Thread.Sleep(1000);
 		}
 
-		Console.Write("\r\nYou used ");
-		Console.ForegroundColor = ConsoleColor.Gray;
-		Console.WriteLine(userAttack.ToString().ToLower());
-		Console.ForegroundColor = ConsoleColor.White;
-		Console.Write("The AI used ");
-		Console.ForegroundColor = ConsoleColor.Gray;
-		Console.WriteLine(aiAttack.ToString().ToLower());
+		console.Write("\r\nYou used ");
+		console.WriteLine(userAttack.ToString().ToLower(), Colour.Gray);
+		console.Write("The AI used ", Colour.White);
+		console.WriteLine(aiAttack.ToString().ToLower(), Colour.Gray);
 
 		if (userAttack == aiAttack)
 			return Outcome.Draw;

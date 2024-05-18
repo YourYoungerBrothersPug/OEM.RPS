@@ -1,5 +1,4 @@
 ﻿using OEM.RPS.Enums;
-using OEM.RPS.Infrastructure.Helpers.Base;
 
 namespace OEM.RPS.Infrastructure.Helpers;
 
@@ -8,7 +7,7 @@ public interface IGameHelper
 	public void PlayGame();
 }
 
-public class GameHelper(IRoundHelper roundHelper) : InputHelper, IGameHelper
+public class GameHelper(IConsoleWrapper console, IRoundHelper roundHelper, IInputHelper inputHelper) : IGameHelper
 {
 	public void PlayGame()
 	{
@@ -17,23 +16,20 @@ public class GameHelper(IRoundHelper roundHelper) : InputHelper, IGameHelper
 			switch (roundHelper.PlayRound())
 			{
 				case Outcome.UserWon:
-					Console.ForegroundColor = ConsoleColor.Green;
-					Console.WriteLine("You won");
+					console.WriteLine("You won", Colour.Green);
 					break;
 				case Outcome.Draw:
-					Console.ForegroundColor = ConsoleColor.Yellow;
-					Console.WriteLine("You drew");
+					console.WriteLine("You drew", Colour.Yellow);
 					break;
 				case Outcome.UserLost:
-					Console.ForegroundColor = ConsoleColor.Red;
-					Console.WriteLine("You lost");
+					console.WriteLine("You lost", Colour.Red);
 					break;
 			}
 
-			if (!InputBool("\r\nPlay again? "))
+			if (!inputHelper.InputBool("\r\nPlay again? "))
 				break;
 
-			Console.Clear();
+			console.Clear();
 		}
 	}
 }

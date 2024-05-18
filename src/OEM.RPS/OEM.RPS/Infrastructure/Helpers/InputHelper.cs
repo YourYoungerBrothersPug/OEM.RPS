@@ -1,15 +1,19 @@
 ﻿using OEM.RPS.Enums;
 
-namespace OEM.RPS.Infrastructure.Helpers.Base;
+namespace OEM.RPS.Infrastructure.Helpers;
 
-public abstract class InputHelper
+public interface IInputHelper
 {
-	private static string? GetInput(string question)
+	public bool InputBool(string question);
+	public Attack InputAttack(string question);
+}
+
+public class InputHelper(IConsoleWrapper console) : IInputHelper
+{
+	private string? GetInput(string question)
 	{
-		Console.ForegroundColor = ConsoleColor.White;
-		Console.Write(question);
-		Console.ForegroundColor = ConsoleColor.Yellow;
-		return Console.ReadLine();
+		console.Write(question, Colour.White);
+		return console.ReadLine(Colour.Yellow);
 	}
 
 	public bool InputBool(string question)
@@ -21,7 +25,7 @@ public abstract class InputHelper
 			if (string.IsNullOrWhiteSpace(input))
 				continue;
 
-			switch (input.Trim().ToLower())
+			switch (input.ToLower())
 			{
 				case "yes" or "y" or "true":
 					return true;
@@ -31,7 +35,7 @@ public abstract class InputHelper
 		}
 	}
 
-	protected Attack InputAttack(string question)
+	public Attack InputAttack(string question)
 	{
 		while (true)
 		{
