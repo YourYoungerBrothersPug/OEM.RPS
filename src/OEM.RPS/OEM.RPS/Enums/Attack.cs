@@ -6,13 +6,15 @@ namespace OEM.RPS.Enums;
 public enum Attack
 {
 	[WinsAgainst(Lizard, Scissors)]
-	Rock,
+	Rock = 1,
 	[WinsAgainst(Rock, Spock)]
-	Paper,
+	Paper = 2,
 	[WinsAgainst(Paper, Lizard)]
-	Scissors,
+	Scissors = 3,
+	[BigBang]
 	[WinsAgainst(Spock, Paper)]
-	Lizard,
+	Lizard = 4,
+	[BigBang]
 	[WinsAgainst(Scissors, Rock)]
-	Spock
+	Spock = 5
 }

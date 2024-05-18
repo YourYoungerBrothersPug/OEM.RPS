@@ -1,0 +1,1 @@
+﻿global using GameMode = (bool LastMove, bool BigBang);
