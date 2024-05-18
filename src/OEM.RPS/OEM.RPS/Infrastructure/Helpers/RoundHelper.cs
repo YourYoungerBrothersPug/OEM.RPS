@@ -1,20 +1,21 @@
 ﻿using EnumsNET;
 using OEM.RPS.Enums;
 using OEM.RPS.Extensions;
+using OEM.RPS.Infrastructure.Helpers.Base;
 using OEM.RPS.Models.Attributes;
 
-namespace OEM.RPS.Infrastructure;
+namespace OEM.RPS.Infrastructure.Helpers;
 
-public interface IRoundHelper : IInputHelper
+public interface IRoundHelper
 {
 	public Outcome PlayRound();
 }
 
-public class RoundHelper(GameMode gameMode) : InputHelper, IRoundHelper
+public class RoundHelper(IGameModeHelper gameModeHelper) : InputHelper, IRoundHelper
 {
 	private readonly Random _random = new();
 	private readonly Attack[] _attacks = [.. Enum.GetValues<Attack>()
-		.Where(a => gameMode.BigBang || !a.HasAttribute<Attack, BigBangAttribute>())];
+		.Where(a => gameModeHelper.BigBang || !a.HasAttribute<Attack, BigBangAttribute>())];
 
 	private Attack? _userLastAttack;
 
@@ -22,7 +23,7 @@ public class RoundHelper(GameMode gameMode) : InputHelper, IRoundHelper
 	{
 		string question = $"What attack do you want to use?\r\n{string.Join("\r\n", _attacks.Select(a => $"{(int)a}) {a}"))}\r\n";
 		Attack userAttack = InputAttack(question);
-		Attack aiAttack = gameMode.LastMove && _userLastAttack is not null
+		Attack aiAttack = gameModeHelper.LastMove && _userLastAttack is not null
 			? _userLastAttack.Value
 			: _attacks[_random.Next(_attacks.Length)];
 

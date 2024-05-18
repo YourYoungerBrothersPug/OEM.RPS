@@ -1,18 +1,24 @@
-﻿namespace OEM.RPS.Infrastructure;
+﻿using OEM.RPS.Infrastructure.Helpers.Base;
+
+namespace OEM.RPS.Infrastructure.Helpers;
 
 public interface IGameModeHelper
 {
-	public GameMode GetGameMode();
+	public bool LastMove { get; }
+	public bool BigBang { get; }
+
+	public void GetGameMode();
 }
 
 public class GameModeHelper : InputHelper, IGameModeHelper
 {
-	public GameMode GetGameMode()
-	{
-		const string lastMoveQuestion = "Should the AI play your last move? ";
-		const string bigBangQuestion = "Do you want to add lizard and spock from the Big Bang Theory? ";
+	public bool LastMove { get; private set; }
+	public bool BigBang { get; private set; }
 
-		GameMode gameMode = (InputBool(lastMoveQuestion), InputBool(bigBangQuestion));
+	public void GetGameMode()
+	{
+		LastMove = InputBool("Should the AI play your last move? ");
+		BigBang = InputBool("Do you want to add lizard and spock from the Big Bang Theory? ");
 
 		Console.Clear();
 		Console.ForegroundColor = ConsoleColor.White;
@@ -22,13 +28,11 @@ public class GameModeHelper : InputHelper, IGameModeHelper
 		Console.ForegroundColor = ConsoleColor.White;
 		Console.Write("Last Move AI: ");
 		Console.ForegroundColor = ConsoleColor.Gray;
-		Console.WriteLine(gameMode.LastMove);
+		Console.WriteLine(LastMove);
 		Console.ForegroundColor = ConsoleColor.White;
 		Console.Write("Big Bang: ");
 		Console.ForegroundColor = ConsoleColor.Gray;
-		Console.WriteLine(gameMode.BigBang);
+		Console.WriteLine(BigBang);
 		Console.WriteLine();
-
-		return gameMode;
 	}
 }

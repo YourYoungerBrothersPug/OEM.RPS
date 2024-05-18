@@ -1,13 +1,8 @@
 ﻿using OEM.RPS.Enums;
 
-namespace OEM.RPS.Infrastructure;
+namespace OEM.RPS.Infrastructure.Helpers.Base;
 
-public interface IInputHelper
-{
-	public bool InputBool(string question);
-}
-
-public abstract class InputHelper : IInputHelper
+public abstract class InputHelper
 {
 	private static string? GetInput(string question)
 	{
